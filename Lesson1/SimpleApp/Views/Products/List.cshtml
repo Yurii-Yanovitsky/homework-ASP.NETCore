@@ -1,0 +1,56 @@
+﻿@model List<SimpleApp.Models.Product>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>List</title>
+    <link href="~/styles.css" rel="stylesheet" />
+</head>
+<body>
+    <h2>Product List</h2>
+    <table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>
+                    <a href="/Products/Details/@item.Id">More Details...</a>
+                </td>
+                @if (item.Quantity > 5)
+                {
+                    <td><font color="green">In Stock</font></td>
+                }
+                else if (item.Quantity > 0 && item.Quantity <= 5)
+                {
+                    <td><font color="orange">Only @item.Quantity left in stock</font></td>
+                }
+                else
+                {
+                    <td><font color="red">Temporarily out of stock</font></td>
+                }
+            </tr>
+        }
+    </table>
+    @if (Model.Count != 0)
+    {
+        <p>
+            All Products: @Model.Count
+        </p>
+    }
+    else
+    {
+        <p>
+            List is empty.
+        </p>
+    }
+</body>
+</html>
+
+
