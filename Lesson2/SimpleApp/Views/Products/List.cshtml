@@ -1,0 +1,67 @@
+﻿@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
+@model SimpleApp.Controllers.ViewProductResult<SimpleApp.Models.Product>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>List</title>
+    <link href="~/styles.css" rel="stylesheet" />
+</head>
+<body>
+    <h2>Product List</h2>
+
+    <table>
+        @foreach (var product in Model.ProductsList)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.Name</td>
+                <td>
+                    <a asp-action="Details" asp-controller="Products" asp-route-id="@product.Id">More Details...</a>
+                </td>
+                @if (product.Quantity > 5)
+                {
+                    <td><font color="green">In Stock</font></td>
+                }
+                else if (product.Quantity > 0 && product.Quantity <= 5)
+                {
+                    <td><font color="orange">Only @product.Quantity left in stock</font></td>
+                }
+                else
+                {
+                    <td><font color="red">Temporarily out of stock</font></td>
+                }
+            </tr>
+        }
+    </table>
+    @{
+        int count = Model.ProductsList.Count();
+    }
+    @if (Model.CategoryName == null)
+    {
+        <p>
+            All Products: @count.
+        </p>
+    }
+    else if (Model.CategoryName != null)
+    {
+        <p>
+            All products in the category @Model.CategoryName :  count.
+        </p>
+    }
+    else
+    {
+        <p>
+            List is empty.
+        </p>
+    }
+</body>
+</html>
+
+
