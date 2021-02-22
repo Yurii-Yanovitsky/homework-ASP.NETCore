@@ -1,0 +1,68 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Calculator</title>
+</head>
+
+<body>
+    <form id="form_id" method="POST">
+
+        x: <input type="text" name="x"><br />
+        y: <input type="text" name="y"><br />
+    </form>
+
+    <p>Result: <span id="resultspan"></span></p>
+
+    <button id="button1">+</button>
+    <button id="button2">-</button>
+    <button id="button3">*</button>
+    <button id="button4">/</button>
+
+    <script>
+        let btn1 = document.querySelector("#button1");
+        let btn2 = document.querySelector("#button2");
+        let btn3 = document.querySelector("#button3");
+        let btn4 = document.querySelector("#button4");
+
+        let xhr = new XMLHttpRequest();
+        let form = document.forms[0];
+
+        btn1.addEventListener("click", () => {
+            xhr.open("POST", "/Calc/Add");
+            xhr.onload = () => {
+                document.querySelector("#resultspan").textContent = xhr.responseText;
+            }
+            xhr.send(new FormData(form));
+        })
+
+        btn2.addEventListener("click", () => {
+            xhr.open("POST", "/Calc/Sub");
+            xhr.onload = () => {
+                document.querySelector("#resultspan").textContent = xhr.responseText;
+            }
+            xhr.send(new FormData(form));
+        })
+
+        btn3.addEventListener("click", () => {
+            xhr.open("POST", "/Calc/Mul");
+            xhr.onload = () => {
+                document.querySelector("#resultspan").textContent = xhr.responseText;
+            }
+            xhr.send(new FormData(form));
+        })
+
+        btn4.addEventListener("click", () => {
+            xhr.open("POST", "/Calc/Div");
+            xhr.onload = () => {
+                document.querySelector("#resultspan").textContent = xhr.responseText;
+            }
+            xhr.send(new FormData(form));
+        })
+    </script>
+</body>
+</html>
