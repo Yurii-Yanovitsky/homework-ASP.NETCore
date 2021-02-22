@@ -1,0 +1,77 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <p>
+        <a asp-action="clientinfo">Test Controller Method</a>
+    </p>
+
+    <button id="button">Get Clients</button>
+
+    <script>
+        let btn = document.querySelector("#button");
+        let xhr = new XMLHttpRequest();
+
+        btn.addEventListener("click", () => {
+            xhr.open("GET", "/json/clientinfo");
+            xhr.onload = () => {
+
+                let body = document.getElementsByTagName("body")[0];
+
+                let tbl = document.createElement("table");
+                tbl.setAttribute("border", "2")
+
+                let tbody = document.createElement("tbody");
+
+                let tr1 = document.createElement("tr");
+                let th1 = document.createElement("th");
+                let th2 = document.createElement("th");
+                let th3 = document.createElement("th");
+
+                th1.innerHTML = "ID";
+                th2.innerHTML = "Login";
+                th3.innerHTML = "email";
+
+                tr1.appendChild(th1);
+                tr1.appendChild(th2);
+                tr1.appendChild(th3);
+
+                tbody.appendChild(tr1);
+
+                let response = JSON.parse(xhr.response);
+
+                for (var key in response) {
+                    let tr2 = document.createElement("tr");
+                    let td1 = document.createElement("td");
+                    let td2 = document.createElement("td");
+                    let td3 = document.createElement("td");
+
+                    td1.innerHTML = response[key].id;
+                    td2.innerHTML = response[key].login;
+                    td3.innerHTML = response[key].email;
+
+                    tr2.appendChild(td1);
+                    tr2.appendChild(td2);
+                    tr2.appendChild(td3);
+
+                    tbody.appendChild(tr2);
+                }
+
+                tbl.appendChild(tbody);
+                body.appendChild(tbl);
+            }
+            xhr.send();
+        })
+    </script>
+</body>
+</html>
