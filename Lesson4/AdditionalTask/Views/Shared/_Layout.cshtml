@@ -1,0 +1,31 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" asp-action="Main">Home<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Page1">Page 1</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-action="Page2">Page 2</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="p-3 bg-dark text-white">
+        <p class="ml-5">@RenderBody()</p>
+    </div>
+    <script src="~/js/bootstrap.min.js"></script>
+</body>
+</html>
