@@ -1,0 +1,34 @@
+﻿@model AdditionalTask.Controllers.ViewProductsResult;
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Products</title>
+</head>
+
+<body>
+    <h2>Product List</h2>
+
+    <table border="1">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Price</th>
+        </tr>
+        @foreach (var product in Model.Products)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.Name</td>
+                <td>@product.Price</td>
+            </tr>
+        }
+    </table>
+    <p>Count: @Model.Count</p>
+</body>
+</html>
