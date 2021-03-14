@@ -1,0 +1,39 @@
+﻿@model SimpleApp.Models.Product
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+    <link href="~/styles.css" rel="stylesheet" />
+</head>
+<body>
+    <h2>Details</h2>
+    <table>
+        <tr>
+            <td>Id</td>
+            <td>@Model.Id</td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>@Model.Name</td>
+        </tr>
+        <tr>
+            <td>Price</td>
+            <td>@Model.Price</td>
+        </tr>
+        <tr>
+            <td>Description</td>
+            <td>@Model.Description</td>
+        </tr>
+        <tr>
+            <td>Quantity</td>
+            <td>@Model.Quantity</td>
+        </tr>
+    </table>
+</body>
+</html>
