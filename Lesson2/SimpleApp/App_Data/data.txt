@@ -1,0 +1,6 @@
+﻿1, IPhone 11, 700, Apple iPhone 11 is powered by the Apple A13 Bionic processor. The screen of the device is protected by Scratch-resistant glass and oleophobic coating., 10, smartphones
+2, Acer Aspire 5 , 900, Acer Aspire 5 is a Windows 10 Home laptop with a 15.60-inch display that has a resolution of 1920x1080 pixels., 2, pc
+3, Keyboard, 35, Simple Wired USB Connection, 0, pc
+4, Mouse, 10, The 3-button wired mouse measures 4.3" x 2.4" x 1.35" with a 4.92 foot (1.5 meter) cable., 10, pc
+5, Pen, 1, This pen is equipped with a unique streamlined stainless steel extra fine nib to deliver an incomparable writing experience., 3, office
+6, Notebook, 1, This minimalist and classic notebook is a wonderful multi-purpose journal for sketching., 8, office
