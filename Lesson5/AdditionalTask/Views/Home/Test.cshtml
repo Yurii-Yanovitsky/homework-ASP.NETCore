@@ -1,0 +1,23 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/site.css" rel="stylesheet" />
+    <title>Test Page</title>
+</head>
+<body>
+    <div id="result">
+        Saved State - @Model
+    </div>
+    <div>
+        <a asp-controller="home" asp-action="index">Home</a>
+    </div>
+</body>
+</html>
