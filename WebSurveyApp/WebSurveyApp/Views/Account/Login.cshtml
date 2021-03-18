@@ -1,0 +1,41 @@
+﻿@model WebSurveyApp.LoginBindingModel;
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <title>Вход</title>
+</head>
+<body>
+
+    <h2>Вход</h2>
+
+    <form asp-action="Login">
+        <div asp-validation-summary="ModelOnly"></div>
+        <div>
+            <label asp-for="Email"></label><br />
+            <input asp-for="Email" />
+            <span asp-validation-for="Email"></span>
+        </div>
+        <div>
+            <label asp-for="Password"></label><br />
+            <input asp-for="Password" />
+            <span asp-validation-for="Password"></span>
+        </div>
+        <div>
+            <p>
+                <input type="submit" value="Вход" />
+            </p>
+        </div>
+    </form>
+    <div>
+        <a asp-action="Register">Регистрация</a>
+    </div>
+</body>
+</html>
