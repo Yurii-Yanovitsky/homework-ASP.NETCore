@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" charset="utf-8" content="width=device-width" />
+    <link type="text/css" href="~/css/site.css" rel="stylesheet" />
+    <title>@ViewBag.Title</title>
+</head>
+<body>
+    <header>
+        <ul class="menu">
+            <li>
+                <a asp-controller="Home" asp-action="List">Home</a>
+            </li>
+            <li>
+                <a asp-controller="Survey" asp-action="Create">New Survey</a>
+            </li>
+            <li>
+                <a asp-controller="Account" asp-action="Login">Account</a>
+            </li>
+        </ul>
+    </header>
+    <hr />
+    <div class="container">
+        @RenderBody()
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+﻿@model List<WebSurveyApp.Report>;
+
+@{
+    ViewBag.Title = "Report";
+}
+
+<h2>Responses Report</h2>
+
+@{
+    var reports = Model;
+
+    foreach (var report in reports)
+    {
+        <hr />
+        <ul class="list-report">
+            <li>
+                <span>
+                    ID: @report.Id
+                </span>
+            </li>
+
+            @{var responses = report.Responses;}
+
+            @foreach (var response in responses)
+            {
+                <li>
+                    <span>
+                        @response.Question.Text: @response.Option.Text
+                    </span>
+                </li>
+            }
+
+            <li>
+                <span>
+                    Date: @report.Created.ToShortDateString()
+                </span>
+            </li>
+            <li>
+                <span>
+                    Time: @report.Created.ToShortTimeString()
+                </span>
+            </li>
+        </ul>
+        <hr />
+    }
+}

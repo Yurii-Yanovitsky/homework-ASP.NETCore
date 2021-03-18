@@ -1,0 +1,31 @@
+﻿@model WebSurveyApp.Option;
+
+@{
+    ViewBag.Title = "Edit Option";
+}
+
+<h2>Edit Option</h2>
+
+<form asp-action="Edit" method="Post">
+
+    <div>
+        <p>
+            <input type="hidden" name="SurveyId" value="@ViewBag.SurveyId" />
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="QuestionId" />
+            <input asp-for="Text" placeholder="Type your Question" />
+            <span asp-validation-for="Text"></span>
+        </p>
+    </div>
+    <hr />
+    <div>
+        <p>
+            <button type="submit" id="submit">Save</button>
+        </p>
+    </div>
+
+</form>
+
+<p>
+    <a asp-controller="Survey" asp-action="Edit" asp-route-surveyId="@ViewBag.SurveyId">Back to Editing</a>
+</p>

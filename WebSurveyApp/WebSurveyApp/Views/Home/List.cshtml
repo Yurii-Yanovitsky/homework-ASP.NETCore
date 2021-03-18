@@ -1,0 +1,61 @@
+﻿@model List<WebSurveyApp.Survey>
+
+@{
+    ViewBag.Title = "Home";
+    Layout = "_Layout";
+}
+
+@{
+    var surveys = Model;
+
+    <ul class="list">
+        <li>
+            <div class="title-color">
+                <span>
+                    Title
+                </span>
+            </div>
+            <div class="title-color text-align-center ">
+                <span>
+                    Modified
+                </span>
+                <span>
+                    Responses
+                </span>
+                <span>
+                    Rsults
+                </span>
+                <span>
+                    Delete
+                </span>
+            </div>
+        </li>
+
+        @foreach (var survey in surveys)
+        {
+            @*<hr />*@
+            <li>
+                <div>
+                    <span>
+                        <a asp-controller="Survey" asp-action="Edit" asp-route-surveyId="@survey.Id">@survey.Title</a>
+                    </span>
+                </div>
+                <div class="text-align-center">
+                    <span>
+                        @survey.Modified.ToShortDateString()
+                    </span>
+                    <span>
+                        @survey.Reports.Count
+                    </span>
+                    <span>
+                        <a asp-controller="Report" asp-action="List" asp-route-surveyId="@survey.Id">Reports</a>
+                    </span>
+                    <span>
+                        <a asp-controller="Survey" asp-action="Delete" asp-route-surveyId="@survey.Id">X</a>
+                    </span>
+                </div>
+            </li>
+            @*<hr>*@
+        }
+    </ul>
+}
