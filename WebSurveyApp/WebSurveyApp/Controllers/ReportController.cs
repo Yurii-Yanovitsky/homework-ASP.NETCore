@@ -1,41 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using WebLogic;
+using WebLogic.Services;
 
 namespace WebSurveyApp.Controllers
 {
+    [Authorize]
     public class ReportController : Controller
     {
-        private readonly SurveyDbContext _context;
+        private readonly ReportService _reportService;
 
-        public ReportController(SurveyDbContext context)
+        public ReportController(ReportService reportService)
         {
-            _context = context;
+            _reportService = reportService;
         }
 
-        [Authorize]
-        public async Task<IActionResult> List(int surveyId)
+        public async Task<IActionResult> List([FromQuery] int surveyId)
         {
-
-            var reports = await _context.Reports
-                .Include("Responses")
-                .Include("Responses.Question")
-                .Include("Responses.Option")
-                .AsSplitQuery()
-                .Where(qs => qs.SurveyId == surveyId)
-                .ToListAsync();
+            var reports = await _reportService.GetReportsAsync(surveyId);
 
             if (reports != null)
             {
+                var viewModel = reports.Select(r => r.ToViewModel()).ToList();
 
-                return View(reports);
+                return View(viewModel);
             }
 
             return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(ReportBindingModel model)
+        {
+            if (model.Id != 0)
+            {
+                var reportModel = model.ToServiceModel();
+                await _reportService.DeleteReportsAsync(reportModel);
+
+                return RedirectToAction("List", new { model.SurveyId });
+            }
+
+            return BadRequest();
         }
     }
 }

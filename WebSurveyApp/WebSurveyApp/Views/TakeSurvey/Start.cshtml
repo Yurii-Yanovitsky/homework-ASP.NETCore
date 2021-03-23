@@ -1,4 +1,4 @@
-﻿@model WebSurveyApp.Survey;
+﻿@model WebSurveyApp.SurveyBindingModel;
 
 @{
     Layout = null;
@@ -9,16 +9,19 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <link href="~/css/site.css" rel="stylesheet"/>
+    <link href="~/css/main.css" rel="stylesheet" />
+    <link href="~/css/start.css" rel="stylesheet" />
     <title>All Question</title>
 </head>
 <body>
-    <div class="container">
+    <header>
         <h2>@Model.Title</h2>
-
+    </header>
+    <hr />
+    <div class="container">
         <form asp-controller="TakeSurvey" asp-action="Finish" method="post">
 
-            <input type="hidden" name="reportModel.SurveyId" value="@Model.Id" />
+            <input type="hidden" name="model.SurveyId" value="@Model.Id" />
             @{
                 var questions = Model.Questions;
 
@@ -26,22 +29,24 @@
                 {
                     <h4>@questions[i].Text</h4>
 
-                    <input type="hidden" name="reportModel.Responses[@i].QuestionId" value="@questions[i].Id" />
+                    <input type="hidden" name="model.Responses[@i].QuestionId" value="@questions[i].Id" />
 
                     var options = questions[i].Options;
 
-                    <ul>
+                    <ul class="container-start-list">
                         @for (int j = 0; j < options.Count; j++)
                         {
                             <li>
-                                <input type="radio" name="reportModel.Responses[@i].OptionId" value="@options[j].Id" />@options[j].Text
+                                <span>
+                                    <input type="radio" name="model.Responses[@i].OptionId" value="@options[j].Id" />@options[j].Text
+                                </span>
                             </li>
                         }
                     </ul>
                 }
             }
             <p>
-                <input type="submit" value="Send" />
+                <button class="btn-color-green" type="submit">Send</button>
             </p>
         </form>
     </div>

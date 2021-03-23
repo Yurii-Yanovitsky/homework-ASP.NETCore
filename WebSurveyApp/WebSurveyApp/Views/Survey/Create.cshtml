@@ -1,27 +1,25 @@
-﻿@model WebSurveyApp.Survey
+﻿@model WebSurveyApp.SurveyBindingModel
 
 @{
     ViewBag.Title = "Create Survey";
 }
 
-<body>
+<div class="container-div">
     <h2>Create survey</h2>
-
-    <form id="form" asp-action="Create" method="Post">
-
+    <hr />
+    <form asp-action="Create" method="Post">
         <div>
             <p>
                 <input asp-for="Title" placeholder="Type your Survey Title" />
+            </p>
+            <p>
                 <span asp-validation-for="Title"></span>
             </p>
-            <hr />
         </div>
-
         <div>
             <p>
-                <button type="submit" id="submit">Create</button>
+                <button class="btn-color-green" type="submit">Create</button>
             </p>
         </div>
-
     </form>
-</body>
+</div>

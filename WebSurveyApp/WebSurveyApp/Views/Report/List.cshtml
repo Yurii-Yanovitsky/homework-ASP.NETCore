@@ -1,4 +1,4 @@
-﻿@model List<WebSurveyApp.Report>;
+﻿@model List<WebSurveyApp.ReportBindingModel>;
 
 @{
     ViewBag.Title = "Report";
@@ -9,38 +9,44 @@
 @{
     var reports = Model;
 
-    foreach (var report in reports)
+    for (int i = 0; i < reports.Count; i++)
     {
-        <hr />
-        <ul class="list-report">
-            <li>
-                <span>
-                    ID: @report.Id
-                </span>
-            </li>
+        <div class="container-report-list">
+            <form asp-action="Delete">
+                <ul>
+                    <li>
+                        <span>
+                            ID: @reports[i].Id
+                        </span>
+                    </li>
 
-            @{var responses = report.Responses;}
+                    @{var responses = reports[i].Responses;}
 
-            @foreach (var response in responses)
-            {
-                <li>
-                    <span>
-                        @response.Question.Text: @response.Option.Text
-                    </span>
-                </li>
-            }
+                    @for (int j = 0; j < responses.Count; j++)
+                    {
+                        <li>
+                            <span>
+                                @responses[j].Question.Text: @responses[j].Option.Text
+                            </span>
+                        </li>
+                    }
 
-            <li>
-                <span>
-                    Date: @report.Created.ToShortDateString()
-                </span>
-            </li>
-            <li>
-                <span>
-                    Time: @report.Created.ToShortTimeString()
-                </span>
-            </li>
-        </ul>
-        <hr />
+                    <li>
+                        <span>
+                            Date: @reports[i].Created.ToShortDateString()
+                        </span>
+                    </li>
+                    <li>
+                        <span>
+                            Time: @reports[i].Created.ToShortTimeString()
+                        </span>
+                    </li>
+                </ul>
+                <hr />
+                <input type="hidden" name="Id" value="@reports[i].Id" />
+                <input type="hidden" name="SurveyId" value="@reports[i].SurveyId" />
+                <button class="btn-color-red" type="submit">Delete</button>
+            </form>
+        </div>
     }
 }

@@ -3,25 +3,23 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebSurveyApp;
+using WebLogic;
 
-namespace WebSurveyApp.Migrations
+namespace WebLogic.Migrations
 {
     [DbContext(typeof(SurveyDbContext))]
-    [Migration("20210317235723_initial")]
-    partial class initial
+    partial class SurveyDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.3")
+                .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("WebSurveyApp.Option", b =>
+            modelBuilder.Entity("WebLogic.Option", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,7 +30,6 @@ namespace WebSurveyApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Text")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -42,7 +39,7 @@ namespace WebSurveyApp.Migrations
                     b.ToTable("Options");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Question", b =>
+            modelBuilder.Entity("WebLogic.Question", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,7 +59,7 @@ namespace WebSurveyApp.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Report", b =>
+            modelBuilder.Entity("WebLogic.Report", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,7 +67,9 @@ namespace WebSurveyApp.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("SurveyId")
                         .HasColumnType("int");
@@ -82,7 +81,7 @@ namespace WebSurveyApp.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Response", b =>
+            modelBuilder.Entity("WebLogic.Response", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -112,7 +111,7 @@ namespace WebSurveyApp.Migrations
                     b.ToTable("Responses");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Survey", b =>
+            modelBuilder.Entity("WebLogic.Survey", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +136,7 @@ namespace WebSurveyApp.Migrations
                     b.ToTable("Surveys");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.User", b =>
+            modelBuilder.Entity("WebLogic.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -145,12 +144,15 @@ namespace WebSurveyApp.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -158,9 +160,9 @@ namespace WebSurveyApp.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Option", b =>
+            modelBuilder.Entity("WebLogic.Option", b =>
                 {
-                    b.HasOne("WebSurveyApp.Question", "Question")
+                    b.HasOne("WebLogic.Question", "Question")
                         .WithMany("Options")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -169,9 +171,9 @@ namespace WebSurveyApp.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Question", b =>
+            modelBuilder.Entity("WebLogic.Question", b =>
                 {
-                    b.HasOne("WebSurveyApp.Survey", "Survey")
+                    b.HasOne("WebLogic.Survey", "Survey")
                         .WithMany("Questions")
                         .HasForeignKey("SurveyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -180,9 +182,9 @@ namespace WebSurveyApp.Migrations
                     b.Navigation("Survey");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Report", b =>
+            modelBuilder.Entity("WebLogic.Report", b =>
                 {
-                    b.HasOne("WebSurveyApp.Survey", "Survey")
+                    b.HasOne("WebLogic.Survey", "Survey")
                         .WithMany("Reports")
                         .HasForeignKey("SurveyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -191,21 +193,21 @@ namespace WebSurveyApp.Migrations
                     b.Navigation("Survey");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Response", b =>
+            modelBuilder.Entity("WebLogic.Response", b =>
                 {
-                    b.HasOne("WebSurveyApp.Option", "Option")
+                    b.HasOne("WebLogic.Option", "Option")
                         .WithMany("Responses")
                         .HasForeignKey("OptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebSurveyApp.Question", "Question")
+                    b.HasOne("WebLogic.Question", "Question")
                         .WithMany("Responses")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("WebSurveyApp.Report", "Report")
+                    b.HasOne("WebLogic.Report", "Report")
                         .WithMany("Responses")
                         .HasForeignKey("ReportId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -218,9 +220,9 @@ namespace WebSurveyApp.Migrations
                     b.Navigation("Report");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Survey", b =>
+            modelBuilder.Entity("WebLogic.Survey", b =>
                 {
-                    b.HasOne("WebSurveyApp.User", "User")
+                    b.HasOne("WebLogic.User", "User")
                         .WithMany("Surveys")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -229,31 +231,31 @@ namespace WebSurveyApp.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Option", b =>
+            modelBuilder.Entity("WebLogic.Option", b =>
                 {
                     b.Navigation("Responses");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Question", b =>
+            modelBuilder.Entity("WebLogic.Question", b =>
                 {
                     b.Navigation("Options");
 
                     b.Navigation("Responses");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Report", b =>
+            modelBuilder.Entity("WebLogic.Report", b =>
                 {
                     b.Navigation("Responses");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.Survey", b =>
+            modelBuilder.Entity("WebLogic.Survey", b =>
                 {
                     b.Navigation("Questions");
 
                     b.Navigation("Reports");
                 });
 
-            modelBuilder.Entity("WebSurveyApp.User", b =>
+            modelBuilder.Entity("WebLogic.User", b =>
                 {
                     b.Navigation("Surveys");
                 });

@@ -3,16 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebSurveyApp
 {
-    public class Option
+    public class OptionBindingModel
     {
         public int Id { get; set; }
+        [Required(ErrorMessage = "Text isn't specified")]
         public string Text { get; set; }
         public int QuestionId { get; set; }
-        public Question Question { get; set; }
-        public List<Response> Responses { get; set; }
-        public Option()
-        {
-            Responses = new List<Response>();
-        }
+        public QuestionBindingModel Question { get; set; }
+        public List<ResponseBindingModel> Responses { get; set; }
     }
 }

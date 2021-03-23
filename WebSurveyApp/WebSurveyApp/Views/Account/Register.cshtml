@@ -1,50 +1,65 @@
 ﻿@model WebSurveyApp.RegisterBindingModel
 
-@{
-    Layout = null;
-}
+@{ Layout = null; }
 
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <link href="~/css/site.css" rel="stylesheet" />
-    <title>Регистрация</title>
+    <link href="~/css/main.css" rel="stylesheet" />
+    <link href="~/css/account.css" rel="stylesheet" />
+    <link href="~/css/validation.css" rel="stylesheet" />
+    <title>Sign Up</title>
 </head>
 <body>
-
-    <h2>Регистрация</h2>
-
-    <form asp-action="Register" method="post">
-        <div asp-validation-summary="ModelOnly"></div>
-        <div>
+    <div class="container-account">
+        <h2>Create a New Account</h2>
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly"></div>
             <div>
-                <label asp-for="Name"></label><br />
-                <input asp-for="Name" />
-                <span asp-validation-for="Name"></span>
-            </div>
-            <div>
-                <label asp-for="Email"></label><br />
-                <input asp-for="Email" />
-                <span asp-validation-for="Email"></span>
-            </div>
-            <div>
-                <label asp-for="Password"></label><br />
-                <input asp-for="Password" />
-                <span asp-validation-for="Password"></span>
-            </div>
-            <div>
-                <label asp-for="ConfirmPassword"></label><br />
-                <input asp-for="ConfirmPassword" />
-                <span asp-validation-for="ConfirmPassword"></span>
-            </div>
-            <div>
+                <div>
+                    <p>
+                        <label asp-for="Name"></label><br />
+                        <input asp-for="Name" />
+                        <br />
+                        <span asp-validation-for="Name"></span>
+                    </p>
+                </div>
+                <div>
+                    <p>
+                        <label asp-for="Email"></label><br />
+                        <input asp-for="Email" />
+                        <br />
+                        <span asp-validation-for="Email"></span>
+                    </p>
+                </div>
+                <div>
+                    <p>
+                        <label asp-for="Password"></label><br />
+                        <input asp-for="Password" />
+                        <br />
+                        <span asp-validation-for="Password"></span>
+                    </p>
+                </div>
+                <div>
+                    <p>
+                        <label asp-for="ConfirmPassword"></label><br />
+                        <input asp-for="ConfirmPassword" />
+                        <br />
+                        <span asp-validation-for="ConfirmPassword"></span>
+                    </p>
+                </div>
+                <div>
+                    <p>
+                        <button class="btn-color-green" type="submit">Sign Up</button>
+                    </p>
+                </div>
                 <p>
-                    <input type="submit" value="Зарегистрироваться" />
+                    <a asp-action="Login">Log In</a>
                 </p>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </body>
 </html>

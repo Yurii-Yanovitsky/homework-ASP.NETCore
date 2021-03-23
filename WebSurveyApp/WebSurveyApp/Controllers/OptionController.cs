@@ -1,100 +1,83 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebLogic.Services;
 
 namespace WebSurveyApp.Controllers
 {
+    [Authorize]
     public class OptionController : Controller
     {
-        private readonly SurveyDbContext _context;
+        private readonly OptionService _optionService;
 
-        public OptionController(SurveyDbContext context)
+        public OptionController(OptionService optionService)
         {
-            _context = context;
+            _optionService = optionService;
         }
 
         [HttpGet]
-        [Authorize]
-        public IActionResult Create([FromRoute] int surveyId, [FromQuery] int questionId)
+
+        public IActionResult Create([FromQuery] int surveyId, [FromQuery] int questionId)
         {
 
-            var optionModel = new Option() { QuestionId = questionId };
+            var viewModel = new OptionBindingModel() { QuestionId = questionId };
 
             ViewBag.SurveyId = surveyId;
 
-            return View(optionModel);
+            return View(viewModel);
         }
 
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Create([FromForm] int surveyId, [FromForm] Option optionModel)
+        public async Task<IActionResult> Create([FromForm] int surveyId, [FromForm] OptionBindingModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Options.Add(optionModel);
-
-                await _context.SaveChangesAsync();
+                var optionModel = model.ToServiceModel();
+                await _optionService.CreateOptionAsync(optionModel);
 
                 return RedirectToAction($"Edit", "Survey", new { surveyId });
             }
 
-            return View(optionModel);
+            return View(model);
         }
 
 
         [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Edit([FromRoute] int surveyId, [FromQuery] int optionId)
+        public async Task<IActionResult> Edit([FromQuery] int surveyId, [FromQuery] int optionId)
         {
-
-            var optionModel = await _context.Options.FindAsync(optionId);
+            var optionModel = await _optionService.GetOptionByIdAsync(optionId);
 
             if (optionModel != null)
             {
+                var viewModel = optionModel.ToViewModel();
                 ViewBag.SurveyId = surveyId;
 
-                return View(optionModel);
+                return View(viewModel);
             }
 
             return NotFound();
-
         }
 
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Edit([FromForm] int surveyId, [FromForm] Option optionModel)
+        public async Task<IActionResult> Edit([FromForm] int surveyId, [FromForm] OptionBindingModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Options.Update(optionModel);
-
-                await _context.SaveChangesAsync();
+                var optionModel = model.ToServiceModel();
+                await _optionService.EditOptionAsync(optionModel);
 
                 return RedirectToAction($"Edit", "Survey", new { surveyId });
             }
 
-            return View(optionModel);
+            return View(model);
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Delete([FromRoute] int surveyId, [FromQuery] int optionId)
+        [HttpPost]
+        public async Task<IActionResult> Delete([FromForm] int surveyId, [FromForm] int optionId)
         {
-            var option = await _context.Options.FindAsync(optionId);
+            await _optionService.DeleteOptionByIdAsync(optionId);
 
-            if (option != null)
-            {
-                _context.Options.Remove(option);
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction($"Edit", "Survey", new { surveyId });
-            }
-
-            return NotFound();
+            return RedirectToAction($"Edit", "Survey", new { surveyId });
         }
     }
 }

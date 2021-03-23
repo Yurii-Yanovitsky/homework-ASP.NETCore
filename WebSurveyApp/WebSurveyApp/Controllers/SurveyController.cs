@@ -1,24 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using WebLogic;
+using WebLogic.Services;
 
 namespace WebSurveyApp.Controllers
 {
+    [Authorize]
     public class SurveyController : Controller
     {
-        private readonly SurveyDbContext _context;
+        private readonly SurveyService _surveyService;
 
-        public SurveyController(SurveyDbContext context)
+        public SurveyController(SurveyService surveyService)
         {
-            _context = context;
+            _surveyService = surveyService;
         }
 
-        [Authorize]
         public IActionResult Create()
         {
 
@@ -26,83 +23,71 @@ namespace WebSurveyApp.Controllers
         }
 
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Create([FromForm] Survey surveyModel)
+        public async Task<IActionResult> Create([FromForm] SurveyBindingModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+                var surveyModel = model.ToServiceModel();
+                string email = User.Identity.Name;
 
-                user.Surveys.Add(surveyModel);
-
-                await _context.SaveChangesAsync();
+                await _surveyService.CreateSurveyAsync(surveyModel, email);
 
                 return RedirectToAction($"Create", "Question", new { surveyId = surveyModel.Id });
             }
 
-            return View(surveyModel);
-        }
-
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Edit(Survey surveyModel)
-        {
-            if (ModelState.IsValid)
-            {
-                var survey = await _context.Surveys.FindAsync(surveyModel.Id);
-                survey.Title = surveyModel.Title;
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction($"Edit", "Survey", new { survey.Id });
-            }
-
-            return NotFound();
+            return View(model);
         }
 
         [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Edit([FromRoute] int surveyId)
+        public async Task<IActionResult> Edit([FromQuery] int surveyId)
         {
-            var survey = await _context.Surveys
-                .Include(s => s.Questions)
-                .ThenInclude(q => q.Options)
-                .FirstOrDefaultAsync(s => s.Id == surveyId);
+            var surveyModel = await _surveyService.GetSurveyById(surveyId);
 
-            if (survey != null)
+            if (surveyModel != null)
             {
+                var viewModel = surveyModel.ToViewModel();
 
-                return View(survey);
+                return View(viewModel);
             }
 
             return View("Create");
         }
 
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> Delete(int surveyId)
+        [HttpPost]
+        public async Task<IActionResult> Title(SurveyBindingModel model)
         {
-            var survey = await _context.Surveys
-                .Include("Reports")
-                .Include("Reports.Responses")
-                .AsSplitQuery()
-                .FirstOrDefaultAsync(r => r.Id == surveyId);
-
-            if (survey != null)
+            if (ModelState.IsValid)
             {
-                var responses = survey.Reports.SelectMany(x => x.Responses);
+                var surveyModel = model.ToServiceModel();
 
-                if (responses != null)
-                {
-                    _context.Responses.RemoveRange(responses);
-                }
+                await _surveyService.EditSurveyAsync(surveyModel);
 
-                _context.Surveys.Remove(survey);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("List", "Home");
+                return RedirectToAction($"Edit", "Survey", new { SurveyId = surveyModel.Id });
             }
 
-            return NotFound();
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int surveyId)
+        {
+            await _surveyService.DeleteSurveyAsync(surveyId);
+
+            return RedirectToAction("List", "Home");
+        }
+
+        public async Task<IActionResult> Title([FromQuery] int surveyId)
+        {
+            var surveyModel = await _surveyService.GetSurveyById(surveyId);
+
+            if (surveyModel != null)
+            {
+                var viewModel = surveyModel.ToViewModel();
+
+                return View(viewModel);
+            }
+
+            return BadRequest();
         }
     }
 }

@@ -5,95 +5,81 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebLogic;
+using WebLogic.Services;
 
 namespace WebSurveyApp.Controllers
 {
+    [Authorize]
     public class QuestionController : Controller
     {
-        private readonly SurveyDbContext _context;
+        private readonly QuestionService _questionService;
 
-        public QuestionController(SurveyDbContext context)
+        public QuestionController(QuestionService questionService)
         {
-            _context = context;
+            _questionService = questionService;
         }
 
         [HttpGet]
-        [Authorize]
-        public IActionResult Create([FromRoute] int surveyId)
+        public IActionResult Create([FromQuery] int surveyId)
         {
-            var questionModel = new Question() { SurveyId = surveyId };
+            var viewModel = new QuestionBindingModel() { SurveyId = surveyId };
 
-            return View(questionModel);
+            return View(viewModel);
         }
 
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Create([FromForm] Question questionModel)
+        public async Task<IActionResult> Create([FromForm] QuestionBindingModel model)
         {
             if (ModelState.IsValid)
             {
-                await _context.Questions.AddAsync(questionModel);
-                await _context.SaveChangesAsync();
+                var questionModel = model.ToServiceModel();
+                await _questionService.CreateQuestionAsync(questionModel);
 
                 int questionId = questionModel.Id;
+                int surveyId = questionModel.SurveyId;
 
-                return RedirectToAction($"Create", "Option", new { questionModel.SurveyId, questionId });
+                return RedirectToAction($"Create", "Option", new { surveyId, questionId });
             }
 
-            return View(questionModel);
+            return View(model);
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Edit([FromQuery] int questionId)
         {
-            var question = await _context.Questions.FindAsync(questionId);
-            if (question != null)
-            {
+            var questionModel = await _questionService.EditQuestionAsync(questionId);
 
-                return View(question);
+            if (questionModel != null)
+            {
+                var viewModel = questionModel.ToViewModel();
+
+                return View(viewModel);
             }
 
             return NotFound();
         }
 
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Edit([FromForm] Question questionModel)
+        public async Task<IActionResult> Edit([FromForm] QuestionBindingModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Questions.Update(questionModel);
-                await _context.SaveChangesAsync();
+                var questionModel = model.ToServiceModel();
+                await _questionService.EditQuestionAsync(questionModel);
 
                 return RedirectToAction("Edit", "Survey", new { questionModel.SurveyId });
             }
 
-            return View(questionModel);
+            return View(model);
         }
 
         [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> Delete([FromForm] Question questionModel)
+        public async Task<IActionResult> Delete([FromForm] int surveyId, [FromForm] int questionId)
         {
+            await _questionService.DeleteQuestionAsync(questionId);
 
-            if (questionModel != null)
-            {
-                var response = await _context.Responses.FirstOrDefaultAsync(r => r.QuestionId == questionModel.Id);
-
-                if (response != null)
-                {
-                    _context.Remove(response);
-                }
-
-                _context.Questions.Remove(questionModel);
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction($"Edit", "Survey", new { questionModel.SurveyId });
-            }
-
-            return NotFound();
+            return RedirectToAction($"Edit", "Survey", new { surveyId });
         }
     }
 }

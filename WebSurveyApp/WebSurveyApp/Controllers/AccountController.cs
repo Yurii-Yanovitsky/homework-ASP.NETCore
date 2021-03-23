@@ -3,62 +3,57 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WebLogic.Services;
 
 namespace WebSurveyApp.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly SurveyDbContext _context;
 
-        public AccountController(SurveyDbContext context)
+        private readonly AccountService _accountService;
+
+        public AccountController(AccountService accountService)
         {
-            _context = context;
+            _accountService = accountService;
         }
 
+        [HttpGet]
+        [IsAlreadyAuthorized("/Home/List")]
         public IActionResult Login()
         {
+
             return View();
         }
 
         [HttpPost]
+        [IsAlreadyAuthorized("/Home/List")]
         public async Task<IActionResult> Login(LoginBindingModel model)
         {
             if (ModelState.IsValid)
             {
+                var loginModel = model.ToServiceModel();
 
-                var userOrNull = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+                var loginResult = await _accountService.LoginSuccessAsync(loginModel);
 
-                if (userOrNull is { } user)
+                if (loginResult.IsSuccess)
                 {
-                    var isCorrectPassword = PasswordHasher.IsCorrectPassword(user, model.Password);
-                    if (isCorrectPassword)
-                    {
-                        await SignInAsync(user);
+                    var userBindingModel = loginResult.User.ToViewModel();
+                    await SignInAsync(userBindingModel);
 
-                        return RedirectToAction("List", "Home");
-                    }
-
-                    return Unauthorized();
+                    return RedirectToAction("List", "Home");
                 }
-
-                ModelState.AddModelError("", "The provided data are incorrect");
             }
+
+            ModelState.AddModelError("", "The provided data are incorrect");
 
             return View(model);
         }
 
-        public async Task<IActionResult> SignOut()
-        {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Success");
-        }
-
+        [HttpGet]
+        [IsAlreadyAuthorized("/Home/List")]
         public IActionResult Register()
         {
 
@@ -66,35 +61,29 @@ namespace WebSurveyApp.Controllers
         }
 
         [HttpPost]
+        [IsAlreadyAuthorized("/Home/List")]
         public async Task<IActionResult> Register(RegisterBindingModel model)
         {
             if (ModelState.IsValid)
             {
+                var registerModel = model.ToServiceModel();
+                var registResult = await _accountService.RegistSuccessAsync(registerModel);
 
-                var userSlreadyExists = _context.Users.Any(u => u.Email == model.Email);
-
-                if (userSlreadyExists)
+                if (registResult.IsSuccess)
                 {
-                    ModelState.AddModelError(nameof(model.Email), "Login is already in use");
-                    return View(model);
+
+                    return RedirectToAction("Success");
                 }
-
-                var user = new User()
+                else
                 {
-                    Name = model.Name,
-                    Email = model.Email,
-                    PasswordHash = PasswordHasher.HashPassword(model.Password),
-                };
-
-                await _context.Users.AddAsync(user);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Success");
+                    ModelState.AddModelError(nameof(model.Email), registResult.Error);
+                }
             }
 
             return View(model);
         }
 
+        [HttpGet]
         public IActionResult Success()
         {
             ViewBag.Username = User.Identity.Name;
@@ -102,7 +91,15 @@ namespace WebSurveyApp.Controllers
             return View();
         }
 
-        private async Task SignInAsync(User user)
+        [HttpGet]
+        public async Task<IActionResult> SignOut()
+        {
+            await HttpContext.SignOutAsync();
+
+            return RedirectToAction("Login");
+        }
+
+        private async Task SignInAsync(UserBindingModel user)
         {
             var claims = new List<Claim>()
             {
@@ -117,5 +114,6 @@ namespace WebSurveyApp.Controllers
 
             await HttpContext.SignInAsync(claimsPrincipal);
         }
+
     }
 }

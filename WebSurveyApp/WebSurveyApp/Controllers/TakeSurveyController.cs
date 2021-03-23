@@ -1,48 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using WebLogic;
+using WebLogic.Services;
 
 namespace WebSurveyApp.Controllers
 {
     public class TakeSurveyController : Controller
     {
-        private readonly SurveyDbContext _context;
+        private readonly ReportService _reportService;
+        private readonly SurveyService _surveyService;
 
-        public TakeSurveyController(SurveyDbContext context)
+        public TakeSurveyController(ReportService reportService, SurveyService surveyService)
         {
-            _context = context;
+            _reportService = reportService;
+            _surveyService = surveyService;
         }
 
-        public async Task<IActionResult> Start(int surveyId)
+        public async Task<IActionResult> Start([FromRoute] int surveyId)
         {
-            var surveyModel = await _context.Surveys
-                .Include(s => s.Questions)
-                .ThenInclude(q => q.Options)
-                .FirstOrDefaultAsync(s => s.Id == surveyId);
+            var surveyModel = await _surveyService.GetSurveyById(surveyId);
 
             if (surveyModel != null)
             {
-                return View(surveyModel);
+                var viewModel = surveyModel.ToViewModel();
+
+                return View(viewModel);
             }
 
             return NotFound();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Finish(Report reportModel)
+        public async Task<IActionResult> Finish(ReportBindingModel model)
         {
-
-            if (reportModel != null)
+            if (ModelState.IsValid)
             {
-
-                await _context.Reports.AddRangeAsync(reportModel);
-                await _context.SaveChangesAsync();
+                var reportModel = model.ToServiceModel();
+                await _reportService.AddReportAsync(reportModel);
 
                 return View();
             }
+
+            ModelState.AddModelError("", "It seems like you haven't answerd all the questions");
 
             return NotFound();
         }

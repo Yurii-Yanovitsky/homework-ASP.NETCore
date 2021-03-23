@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebSurveyApp
+namespace WebLogic
 {
     public class Survey
     {

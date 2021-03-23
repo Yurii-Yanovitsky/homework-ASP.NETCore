@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace WebSurveyApp
+namespace WebLogic.Services
 {
     public static class PasswordHasher
     {

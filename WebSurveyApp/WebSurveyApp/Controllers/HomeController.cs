@@ -1,31 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using WebLogic;
+using WebLogic.Services;
 
 namespace WebSurveyApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly SurveyDbContext _context;
+        private readonly SurveyService _surveyService;
 
-        public HomeController(SurveyDbContext context)
+        public HomeController(SurveyService surveyService)
         {
-            _context = context;
+            _surveyService = surveyService;
         }
 
         [Authorize]
         public async Task<IActionResult> List()
         {
-            var surveys = await _context.Surveys
-                .Include(s => s.Reports)
-                .Where(s => s.User.Email == User.Identity.Name)
-                .ToListAsync();
+            string email = User.Identity.Name;
+            var surveys = await _surveyService.GetSurveysAsync(email);
 
-            return View(surveys);
+            var viewModel = surveys.Select(s => s.ToViewModel()).ToList();
+
+            return View(viewModel);
         }
     }
 }

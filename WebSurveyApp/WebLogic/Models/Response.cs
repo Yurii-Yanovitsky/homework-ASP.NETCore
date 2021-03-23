@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace WebSurveyApp
+﻿namespace WebLogic
 {
     public class Response
     {
