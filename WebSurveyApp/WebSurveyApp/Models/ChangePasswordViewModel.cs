@@ -5,7 +5,6 @@ namespace WebSurveyApp.Models
     public class ChangePasswordViewModel
     {
         public int UserId { get; set; }
-        public string Email { get; set; }
 
         [Required(ErrorMessage = "The new password isn't specified")]
         [DataType(DataType.Password)]

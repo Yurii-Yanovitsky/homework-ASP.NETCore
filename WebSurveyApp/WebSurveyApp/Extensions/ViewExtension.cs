@@ -118,7 +118,6 @@ namespace WebSurveyApp
             var changePasswordViewModel = new ChangePasswordViewModel
             {
                 UserId = model.Id,
-                Email = model.Email,
                 OldPassword = model.PasswordHash
             };
 

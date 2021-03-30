@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace WebSurveyApp
 {
-    public class IsAlreadyAuthorized : ActionFilterAttribute
+    public class AnonymousOnly : ActionFilterAttribute
     {
         private readonly string _pathString;
 
-        public IsAlreadyAuthorized(string pathString)
+        public AnonymousOnly(string pathString)
         {
             _pathString = pathString;
         }

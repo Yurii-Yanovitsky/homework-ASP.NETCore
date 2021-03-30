@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -21,7 +20,7 @@ namespace WebSurveyApp.Controllers
         }
 
         [HttpGet]
-        [IsAlreadyAuthorized("/Home/List")]
+        [AnonymousOnly("/Home/List")]
         public IActionResult Login()
         {
 
@@ -29,7 +28,7 @@ namespace WebSurveyApp.Controllers
         }
 
         [HttpPost]
-        [IsAlreadyAuthorized("/Home/List")]
+        [AnonymousOnly("/Home/List")]
         public async Task<IActionResult> Login(LoginBindingModel model)
         {
             if (ModelState.IsValid)
@@ -53,7 +52,7 @@ namespace WebSurveyApp.Controllers
         }
 
         [HttpGet]
-        [IsAlreadyAuthorized("/Home/List")]
+        [AnonymousOnly("/Home/List")]
         public IActionResult Register()
         {
 
@@ -61,7 +60,7 @@ namespace WebSurveyApp.Controllers
         }
 
         [HttpPost]
-        [IsAlreadyAuthorized("/Home/List")]
+        [AnonymousOnly("/Home/List")]
         public async Task<IActionResult> Register(RegisterBindingModel model)
         {
             if (ModelState.IsValid)
